@@ -1,12 +1,10 @@
-const regex = /^[A-Za-z\s\-']+$/;
 const GEOCODING_API_KEY = 'VwLHskq3W+MM/YD51fJqLg==9TPHL4XBmXFzpjZE';
-let autocomplete;
 
 function initMap() {
   const map = createMap();
   const marker = createMarker(map);
 
-  autocomplete = createAutocomplete();
+  createAutocomplete();
 
   document.getElementById('searchForm').addEventListener('submit', function (e) {
     e.preventDefault();
