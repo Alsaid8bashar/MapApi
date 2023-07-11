@@ -1,45 +1,68 @@
-let regex = /^[A-Za-z\s\-']+$/;
+const regex = /^[A-Za-z\s\-']+$/;
 const GEOCODING_API_KEY = 'VwLHskq3W+MM/YD51fJqLg==9TPHL4XBmXFzpjZE';
-
+let autocomplete;
 
 function initMap() {
-  const map = new google.maps.Map(document.getElementById('map'), {
-    zoom: 1,
-    center: { lat: 0, lng: 0 }
-  });
+  const map = createMap();
+  const marker = createMarker(map);
 
-  const marker = new google.maps.Marker({
-    map: map,
-    animation: google.maps.Animation.DROP
-  });
+  autocomplete = createAutocomplete();
 
   document.getElementById('searchForm').addEventListener('submit', function (e) {
     e.preventDefault();
     const city = document.getElementById('cityInput').value;
-    if (validateCityName(city)) {
-      showSpinner();
-      getGeoCoding(city)
-        .then((location) => {
-          hideSpinner();
-          map.setCenter(location);
-          map.setZoom(10);
-          marker.setPosition(location);
-          marker.setMap(map);
-        }).catch((error) => {
-          hideSpinner();
-          alert('No results found for the entered city.');
-        });
-    }
+    showSpinner();
+    getGeoCoding(city)
+      .then((location) => {
+        hideSpinner();
+        updateMap(map, marker, location);
+      })
+      .catch((error) => {
+        hideSpinner();
+        console.error(error);
+        alert('No results found for the entered city.');
+      });
   });
+}
+
+function createMap() {
+  return new google.maps.Map(document.getElementById('map'), {
+    zoom: 1,
+    center: { lat: 0, lng: 0 }
+  });
+}
+
+function createMarker(map) {
+  return new google.maps.Marker({
+    map: map,
+    animation: google.maps.Animation.DROP
+  });
+}
+
+function createAutocomplete() {
+  const input = document.getElementById('cityInput');
+  const options = {
+    types: ['(cities)']
+  };
+  const autocomplete = new google.maps.places.Autocomplete(input, options);
+  autocomplete.setFields(['geometry']);
+  return autocomplete;
+}
+
+function updateMap(map, marker, location) {
+  map.setCenter(location);
+  map.setZoom(10);
+  marker.setPosition(location);
+  marker.setMap(map);
 }
 
 async function getGeoCoding(city) {
   try {
     const response = await fetch(`https://api.api-ninjas.com/v1/geocoding?city=${city}`, {
-      method: "GET",
+      method: 'GET',
       headers: {
-        "Content-Type": "application/json",
-        "X-Api-Key": GEOCODING_API_KEY
+        'Content-Type': 'application/json',
+        'X-Api-Key': GEOCODING_API_KEY
       },
     });
 
@@ -63,14 +86,4 @@ function showSpinner() {
 
 function hideSpinner() {
   document.getElementById('spinner').style.display = 'none';
-}
-
-function validateCityName(city) {
-  if (regex.test(city)) {
-    return true;
-  }
-  else {
-    alert('Invalid city name.');
-    return false;
-  }
 }

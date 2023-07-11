@@ -11,14 +11,13 @@
   <div id="map"></div>
   <div id="spinner"></div>
   <form id="searchForm">
-    <label for="cityInput">Enter City Name:</label>
+    <label for="city">Enter City Name:</label>
     <input type="text" id="cityInput" placeholder="E.g. New York" required>
     <button type="submit">Search</button>
   </form>
 
   <script src="assets/script.js"></script>
-  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_N-bSHkKA3ErA1nT2gaMkVi0JgE7LFWM&callback=initMap"
-    async defer></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_N-bSHkKA3ErA1nT2gaMkVi0JgE7LFWM&libraries=places&callback=initMap" async defer></script>
 </body>
 
 </html>
